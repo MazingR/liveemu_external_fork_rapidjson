@@ -74,7 +74,15 @@ public:
             std::free(originalPtr);
             return NULL;
         }
-        return std::realloc(originalPtr, newSize);
+		void* newPtr = std::malloc(newSize);
+		if (originalPtr)
+		{
+			size_t minSize = newSize > originalSize ? originalSize : newSize;
+			memcpy_s(newPtr, minSize, originalPtr, minSize);
+			std::free(originalPtr);
+		}
+
+		return newPtr;
     }
     static void Free(void *ptr) { std::free(ptr); }
 };
